@@ -4,24 +4,55 @@ import * as moment from 'moment';
 
 const Ordenes = props => {
 
-    const [Ordenes, setOrdenes] = useState([]);
+    const [ordenes, setOrdenes] = useState([]);
     const [producto, setProducto] = useState([]);
     const [fechaDesde, setFechaDesde] = useState(moment().format("YYYY-MM-DD"));
     const [fechaHasta, setFechaHasta] = useState(moment().format("YYYY-MM-DD"));
+    const [totales, setTotales] = useState(null);
 
     useEffect(() => {
         getOrdenes();
     }, []);
 
     const getOrdenes = async () => {
-        await axios.post('http://127.0.0.1:3000/ordenes', {
+        console.log(`${process.env.REACT_APP_URL_API}/ordenes`)
+        await axios.post(`${process.env.REACT_APP_URL_API}/ordenes`, {
             fechaDesde: fechaDesde != null ? fechaDesde : "2010-01-01",
             fechaHasta: fechaHasta != null ? fechaHasta : "2030-01-01"
         })
             .then(res => {
                 setOrdenes(res.data);
+                
             })
             .catch(err => console.log(err));
+    }
+
+
+    useEffect(() => {
+        calcularTotales();
+    }, [ordenes]);
+
+    const calcularTotales = () => {
+        let totalPagado = 0;
+        let costoEnvio = 0;
+        let totalRecibido = 0;
+        let cargoML = 0;
+        let fijo = 0;
+        let neto = 0;
+        ordenes.map(o => {
+            totalPagado += o.totalPagado;
+            costoEnvio += o.costoEnvio;
+            totalRecibido += o.totalRecibido;
+            cargoML += o.cargoML;
+            fijo += Number(22);
+            neto += Number(o.totalRecibido - o.cargoML - 22);
+        });
+        console.log({
+            totalPagado, costoEnvio, totalRecibido, cargoML, fijo, neto
+        })
+        setTotales({
+            totalPagado, costoEnvio, totalRecibido, cargoML, fijo, neto
+        });
     }
 
     return (
@@ -52,18 +83,30 @@ const Ordenes = props => {
                     </tr>
                 </thead>
                 <tbody>
-                    {Ordenes.map(producto =>
-                        /*<div onClick={() => setProducto(producto)} className="card col-12 col-sm-6 col-md-3 m-3 p-0 text-center" key={producto._id}>*/
+                    {totales && 
+                    <tr>
+                    <th scope="row">TOTALES</th>
+                    <td>*</td>
+                    <td style={{ textAlign: 'end' }}>{totales.totalPagado.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>- $ {totales.costoEnvio.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>{totales.totalRecibido.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>- $ {totales.cargoML.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>- $ {totales.fijo.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>{totales.neto.toFixed(2)}</td>
 
-                        <tr onClick={() => setProducto(producto)} key={producto._id}>
-                            <th scope="row">{producto.idProducto}</th>
-                            <td>{producto.titulo}</td>
-                            <td style={{textAlign: 'end'}}>{producto.totalPagado.toFixed(2)}</td>
-                            <td style={{textAlign: 'end'}}>- $ {producto.costoEnvio.toFixed(2)}</td>
-                            <td style={{textAlign: 'end'}}>{producto.totalRecibido.toFixed(2)}</td>
-                            <td style={{textAlign: 'end'}}>- $ {producto.cargoML.toFixed(2)}</td>
-                            <td style={{textAlign: 'end'}}>- $ {Number(22).toFixed(2)}</td>
-                            <td style={{textAlign: 'end'}}>{Number(producto.totalRecibido - producto.cargoML - 22).toFixed(2)}</td>
+                </tr>}
+                    
+                    {ordenes.map(orden =>
+
+                        <tr onClick={() => setProducto(orden)} key={orden._id}>
+                            <th scope="row">{orden.idProducto}</th>
+                            <td>{orden.titulo}</td>
+                            <td style={{ textAlign: 'end' }}>{orden.totalPagado.toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>- $ {orden.costoEnvio.toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>{orden.totalRecibido.toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>- $ {orden.cargoML.toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>- $ {Number(22).toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>{Number(orden.totalRecibido - orden.cargoML - 22).toFixed(2)}</td>
 
                         </tr>
                     )}

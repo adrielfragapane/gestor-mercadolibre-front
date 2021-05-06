@@ -13,7 +13,7 @@ const Ordenes = props => {
     }, []);
 
     const getPublicaciones = async () => {
-        await axios.get('http://127.0.0.1:3000/stock')
+        await axios.get(`${process.env.REACT_APP_URL_API}/stock`)
             .then(res => {
                 setPublicaciones(res.data);
             })
