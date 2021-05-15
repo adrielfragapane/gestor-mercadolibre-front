@@ -20,6 +20,9 @@ export default class Navigation extends Component {
                             <li className="nav-item">
                                 <Link className="nav-link" to="/ordenes">Ordenes</Link>
                             </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/cassassa">Cassassa</Link>
+                            </li>
                         </ul>
                     </div>
                 </div>
