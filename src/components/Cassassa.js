@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as moment from 'moment';
+import $ from 'jquery';
+import 'bootstrap/dist/js/bootstrap';
 
 const Cassassa = props => {
 
@@ -12,9 +14,36 @@ const Cassassa = props => {
     const [precio, setPrecio] = useState(0);
     const [idioma, setIdioma] = useState('');
     const [imagen, setImagen] = useState('');
+    const [seleccion, setSeleccion] = useState([]);
+    const [selectAll, setSelectAll] = useState(true);
+    const [mensaje, setMensaje] = useState('');
+    const [showAllert, setShowAllert] = useState(false);
+
+
+    const change = (_id, checked) => {
+        if (checked) {
+            setSeleccion([...seleccion, _id]);
+        }
+        else {
+            const seleccion2 = [...seleccion];
+            seleccion2.splice(seleccion2.indexOf(_id), 1);
+            setSeleccion(seleccion2);
+        }
+    };
+
+    const changeAll = (add) => {
+        setSeleccion(add ? libros.map(l => l._id) : []);
+        setSelectAll(add);
+    }
+
+    const showNot = (mensaje) => {
+        setMensaje(mensaje);
+        setShowAllert(true)
+    }
 
     useEffect(() => {
         getLibros();
+
     }, []);
 
     useEffect(() => {
@@ -32,14 +61,26 @@ const Cassassa = props => {
             .then(res => {
                 console.log(res)
                 setLibros(res.data);
+                setSeleccion(res.data.map(l => l._id));
+                setSelectAll(true);
             })
             .catch(err => console.log(err));
     }
 
-    const publicarLibro = async (_id) => {
-        await axios.post(`${process.env.REACT_APP_URL_API}/cassassa/publicarLibro/${_id}`)
+    const descartarLibro = async (_id) => {
+        await axios.post(`${process.env.REACT_APP_URL_API}/cassassa/descartarLibro/${_id}`)
             .then(res => {
                 console.log(res);
+                getLibros();
+            })
+            .catch(err => console.log(err));
+    }
+
+    const publicarLibros = async () => {
+        await axios.post(`${process.env.REACT_APP_URL_API}/cassassa/publicarLibros`, { libros: seleccion })
+            .then(res => {
+                console.log(res);
+                showNot(`Se han actualizado ${res.data.publicados} libros...`)
                 getLibros();
             })
             .catch(err => console.log(err));
@@ -71,17 +112,35 @@ const Cassassa = props => {
 
     return (
         <div>
+
+            { showAllert && <div className="alert alert-warning alert-dismissible fade show" role="alert" 
+            style={{position:'fixed', top: '0px', right: '0px'}}>
+                {mensaje}
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close"
+                    onClick={() => setShowAllert(false)}>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>}
+
             <table className="table table-bordered table-dark">
                 <thead>
                     <tr>
-                        <th scope="col">ISBN</th>
-                        <th scope="col">Titulo</th>
-                        <th scope="col">Autor</th>
-                        <th scope="col">Editorial</th>
-                        <th scope="col">Precio</th>
-                        <th scope="col">Idioma</th>
-                        <th scope="col">Acciones</th>
-                        <th scope="col">Imagen</th>
+                        <th scope="col" style={{ textAlign: 'center' }}>ISBN</th>
+                        <th scope="col" style={{ textAlign: 'center' }}>Titulo</th>
+                        <th scope="col" style={{ textAlign: 'center' }}>Autor</th>
+                        <th scope="col" style={{ textAlign: 'center' }}>Editorial</th>
+                        <th scope="col" style={{ textAlign: 'center' }}>Precio</th>
+                        <th scope="col" style={{ textAlign: 'center' }}>Idioma</th>
+                        <th scope="col" style={{ textAlign: 'center' }}><div>
+                            <input className="m-2" type="checkbox" checked={selectAll} onChange={e => changeAll(e.target.checked)} />
+                        </div>
+
+                        </th>
+                        <th scope="col" style={{ textAlign: 'center' }}>
+                            <button className="btn btn-primary"
+                                onClick={() => publicarLibros()}>Publicar</button>
+                        </th>
+                        <th scope="col" style={{ textAlign: 'center' }}>Imagen</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -99,7 +158,7 @@ const Cassassa = props => {
                             <td style={{ textAlign: 'center' }}>{l.autor}</td>
                             <td style={{ textAlign: 'center' }}>{l.editorial}</td>
                             <td style={{ textAlign: 'end' }}>$ {l.precio.toFixed(2)}</td>
-                            
+
                             <td style={{ textAlign: 'center' }}>
                                 {
                                     libro != null && libro._id == l._id ? <select className="form-select"
@@ -111,14 +170,18 @@ const Cassassa = props => {
                                     </select> : l.idioma
                                 }
                             </td>
-                            
+
                             <td style={{ textAlign: 'center' }}>
-                                {libro != null && libro._id == l._id ? <button className="btn btn-success"
+                                <input type="checkbox" checked={seleccion.includes(l._id)} onChange={e => change(l._id, e.target.checked)} />
+                            </td>
+
+                            <td style={{ textAlign: 'center' }}>
+                                {libro != null && libro._id == l._id ? <button className="btn btn-success w-100"
                                     onClick={() => update()}>Actualizar</button> :
-                                    <button className="btn btn-success"
+                                    <button className="btn btn-success w-100"
                                         onClick={() => setLibro(l)}>Editar</button>}
-                                <button className="btn btn-primary"
-                                    onClick={() => publicarLibro(l._id)}>Publicar</button>
+                                <button className="btn btn-danger w-100 mt-3"
+                                    onClick={() => descartarLibro(l._id)}>Descartar</button>
                             </td>
                             <td style={{ textAlign: 'center' }}><img src={l.linkImagen}
                                 style={{ height: '100px', width: '60px', borderRadius: '10px', cursor: 'zoom-in' }}

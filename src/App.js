@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
+import 'bootstrap/dist/js/bootstrap';
+
 import State from './context/app/State';
 
 import Navigation from './components/Navigation';

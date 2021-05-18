@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import * as moment from 'moment';
 
 const Stock = props => {
 
@@ -9,6 +8,7 @@ const Stock = props => {
     const [estante, setEstante] = useState('');
     const [posicion, setPosicion] = useState('');
     const [propietario, setPropietario] = useState('');
+    const [imagen, setImagen] = useState('');
 
     useEffect(() => {
         getlibros();
@@ -19,6 +19,11 @@ const Stock = props => {
             setEstante(libro.estante);
             setPosicion(libro.posicion);
             setPropietario(libro.propietario);
+        }
+        else {
+            setEstante('');
+            setPosicion('');
+            setPropietario('');
         }
     }, [libro]);
 
@@ -70,26 +75,26 @@ const Stock = props => {
                     {libros && libros.map(l =>
 
                         <tr key={l._id}>
-                            <th scope="row" style={{ textAlign: 'center' }}>{l.id_ml}</th>
+                            <th scope="row" style={{ textAlign: 'center' }}><a href={l.link}>{l.id_ml}</a></th>
                             <td>{l.publicacion}</td>
                             <td style={{ textAlign: 'end' }}>$ {l.precio.toFixed(2)}</td>
                             <td style={{ textAlign: 'center' }}>{l.estado}</td>
+
                             <td style={{ textAlign: 'center' }}>
                                 {
                                     libro != null && libro._id == l._id ? <input type="text" id="estante" className="form-control" style={{ width: '50px', margin: '0 auto', textAlign: 'center' }}
                                         value={estante} onChange={e => setEstante(e.target.value)} /> : l.estante
                                 }
-
                             </td>
+
                             <td style={{ textAlign: 'center' }}>
                                 {
                                     libro != null && libro._id == l._id ? <input type="text" id="posicion" className="form-control" style={{ width: '50px', margin: '0 auto', textAlign: 'center' }}
                                         value={posicion} onChange={e => setPosicion(e.target.value)} /> : l.posicion
                                 }
-
                             </td>
-                            <td style={{ textAlign: 'center' }}>
 
+                            <td style={{ textAlign: 'center' }}>
                                 {
                                     libro != null && libro._id == l._id ? <select className="form-select"
                                         value={propietario} onChange={e => setPropietario(e.target.value)}>
@@ -98,10 +103,8 @@ const Stock = props => {
                                         <option value="Laura">Laura</option>
                                     </select> : l.propietario
                                 }
-
-
-
                             </td>
+
                             <td style={{ textAlign: 'center' }}>
                                 {libro != null && libro._id == l._id ? <button className="btn btn-success"
                                     onClick={() => update()}>Actualizar</button> :
@@ -112,7 +115,8 @@ const Stock = props => {
 
                             <td style={{ textAlign: 'center' }}><img src={l.pictures[0]}
                                 style={{ height: '100px', width: '60px', borderRadius: '10px', cursor: 'zoom-in' }}
-                                onClick={() => setLibro(l)} data-toggle="modal" data-target="#myModal" /></td>
+                                onClick={() => setImagen(l.pictures[0])} data-toggle="modal" data-target="#myModal" />
+                            </td>
                         </tr>
                     )}
                 </tbody>
@@ -120,14 +124,13 @@ const Stock = props => {
 
             <div id="myModal" className="modal fade" role="dialog">
                 <div className="modal-dialog">
-
                     <div className="modal-content">
                         <div className="modal-header">
                             <button type="button" className="close" data-dismiss="modal">&times;</button>
                         </div>
                         <div className="modal-body d-flex justify-content-center">
-                            {libro && <>
-                                <img src={libro.pictures[0]} />
+                            {imagen && <>
+                                <img src={imagen} />
                             </>}
                         </div>
                     </div>
