@@ -95,7 +95,7 @@ const Cassassa = props => {
         let _precio = selectValue(precio, libro.precio);
         let _idioma = selectValue(idioma, libro.idioma);
 
-        await axios.post(`${process.env.REACT_APP_URL_API}/cassassa/updateDatos`,
+        await axios.post(`${process.env.REACT_APP_URL_API}/cassassa/actualizarLibros`,
             {
                 libros: [{ _id, titulo: _titulo, autor: _autor, editorial: _editorial, precio: _precio, idioma: _idioma }]
             })
@@ -137,7 +137,7 @@ const Cassassa = props => {
 
                         </th>
                         <th scope="col" style={{ textAlign: 'center' }}>
-                            <button className="btn btn-primary"
+                            <button className="btn btn-primary w-100"
                                 onClick={() => publicarLibros()}>Publicar</button>
                         </th>
                         <th scope="col" style={{ textAlign: 'center' }}>Imagen</th>

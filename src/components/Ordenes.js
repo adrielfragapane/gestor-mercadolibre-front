@@ -21,6 +21,7 @@ const Ordenes = props => {
             fechaHasta: fechaHasta != null ? fechaHasta : "2030-01-01"
         })
             .then(res => {
+                console.log(res)
                 setOrdenes(res.data);
                 
             })
@@ -33,26 +34,17 @@ const Ordenes = props => {
     }, [ordenes]);
 
     const calcularTotales = () => {
-        let totalPagado = 0;
-        let costoEnvio = 0;
-        let totalRecibido = 0;
-        let cargoML = 0;
-        let fijo = 0;
-        let neto = 0;
+        const tot = {totalTotal : 0 , totalCargoML : 0 , totalImpuestoIB :0 , totalTotalRecibido : 0 , totalDineroFlex : 0 , totalNeto : 0}
         ordenes.map(o => {
-            totalPagado += o.totalPagado;
-            costoEnvio += o.costoEnvio;
-            totalRecibido += o.totalRecibido;
-            cargoML += o.cargoML;
-            fijo += Number(22);
-            neto += Number(o.totalRecibido - o.cargoML - 22);
+            tot.totalTotal += o.total;
+            tot.totalCargoML += o.cargoML;
+            tot.totalImpuestoIB += o.impuestoIB;
+            tot.totalTotalRecibido += o.totalRecibido;
+            tot.totalDineroFlex += o.dineroFlex;
+            tot.totalNeto += o.neto;
         });
-        console.log({
-            totalPagado, costoEnvio, totalRecibido, cargoML, fijo, neto
-        })
-        setTotales({
-            totalPagado, costoEnvio, totalRecibido, cargoML, fijo, neto
-        });
+        console.log(tot);
+        setTotales(tot);
     }
 
     return (
@@ -75,10 +67,10 @@ const Ordenes = props => {
                         <th scope="col">Publicacion</th>
                         <th scope="col">Titulo</th>
                         <th scope="col">Total</th>
-                        <th scope="col">Costo Envío</th>
-                        <th scope="col">Recibido</th>
                         <th scope="col">Cargo ML</th>
-                        <th scope="col"> - $ 22.00</th>
+                        <th scope="col">Impuesto IIBB</th>
+                        <th scope="col">Recibido</th>
+                        <th scope="col">Dinero Flex</th>
                         <th scope="col">Neto</th>
                     </tr>
                 </thead>
@@ -87,13 +79,12 @@ const Ordenes = props => {
                     <tr>
                     <th scope="row">TOTALES</th>
                     <td>*</td>
-                    <td style={{ textAlign: 'end' }}>{totales.totalPagado.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>- $ {totales.costoEnvio.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>{totales.totalRecibido.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>- $ {totales.cargoML.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>- $ {totales.fijo.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>{totales.neto.toFixed(2)}</td>
-
+                    <td style={{ textAlign: 'end' }}>{totales.totalTotal.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>- $ {totales.totalCargoML.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>- $ {totales.totalImpuestoIB.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>$ {totales.totalTotalRecibido.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>- $ {totales.totalDineroFlex.toFixed(2)}</td>
+                    <td style={{ textAlign: 'end' }}>{totales.totalNeto.toFixed(2)}</td>
                 </tr>}
                     
                     {ordenes.map(orden =>
@@ -101,13 +92,12 @@ const Ordenes = props => {
                         <tr onClick={() => setProducto(orden)} key={orden._id}>
                             <th scope="row">{orden.idProducto}</th>
                             <td>{orden.titulo}</td>
-                            <td style={{ textAlign: 'end' }}>{orden.totalPagado.toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>- $ {orden.costoEnvio.toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>{orden.totalRecibido.toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>{orden.total.toFixed(2)}</td>
                             <td style={{ textAlign: 'end' }}>- $ {orden.cargoML.toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>- $ {Number(22).toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>{Number(orden.totalRecibido - orden.cargoML - 22).toFixed(2)}</td>
-
+                            <td style={{ textAlign: 'end' }}>- $ {orden.impuestoIB.toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>$ {orden.totalRecibido.toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>- $ {orden.dineroFlex.toFixed(2)}</td>
+                            <td style={{ textAlign: 'end' }}>$ {orden.neto.toFixed(2)}</td>
                         </tr>
                     )}
                 </tbody>
