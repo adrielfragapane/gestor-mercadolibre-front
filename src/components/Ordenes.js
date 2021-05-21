@@ -64,14 +64,14 @@ const Ordenes = props => {
             <table className="table table-bordered table-dark">
                 <thead>
                     <tr>
-                        <th scope="col">Publicacion</th>
-                        <th scope="col">Titulo</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Cargo ML</th>
-                        <th scope="col">Impuesto IIBB</th>
-                        <th scope="col">Recibido</th>
-                        <th scope="col">Dinero Flex</th>
-                        <th scope="col">Neto</th>
+                        <th scope="col" className="text-center">Publicacion</th>
+                        <th scope="col" className="text-center">Titulo</th>
+                        <th scope="col" className="text-center">Total</th>
+                        <th scope="col" className="text-center">Cargo ML</th>
+                        <th scope="col" className="text-center">II BB</th>
+                        <th scope="col" className="text-center">Recibido</th>
+                        <th scope="col" className="text-center">Dinero Flex</th>
+                        <th scope="col" className="text-center">Neto</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,12 +79,12 @@ const Ordenes = props => {
                     <tr>
                     <th scope="row">TOTALES</th>
                     <td>*</td>
-                    <td style={{ textAlign: 'end' }}>{totales.totalTotal.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>- $ {totales.totalCargoML.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>- $ {totales.totalImpuestoIB.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>$ {totales.totalTotalRecibido.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>- $ {totales.totalDineroFlex.toFixed(2)}</td>
-                    <td style={{ textAlign: 'end' }}>{totales.totalNeto.toFixed(2)}</td>
+                    <td className="text-center font-weight-bold text-info">$ {totales.totalTotal.toFixed(2)}</td>
+                    <td className="text-center font-weight-bold text-danger">- $ {totales.totalCargoML.toFixed(2)}</td>
+                    <td className="text-center font-weight-bold text-danger">- $ {totales.totalImpuestoIB.toFixed(2)}</td>
+                    <td className="text-center font-weight-bold text-info">$ {totales.totalTotalRecibido.toFixed(2)}</td>
+                    <td className="text-center font-weight-bold text-danger">- $ {totales.totalDineroFlex.toFixed(2)}</td>
+                    <td className="text-center font-weight-bold text-success">$ {totales.totalNeto.toFixed(2)}</td>
                 </tr>}
                     
                     {ordenes.map(orden =>
@@ -92,12 +92,12 @@ const Ordenes = props => {
                         <tr onClick={() => setProducto(orden)} key={orden._id}>
                             <th scope="row">{orden.idProducto}</th>
                             <td>{orden.titulo}</td>
-                            <td style={{ textAlign: 'end' }}>{orden.total.toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>- $ {orden.cargoML.toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>- $ {orden.impuestoIB.toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>$ {orden.totalRecibido.toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>- $ {orden.dineroFlex.toFixed(2)}</td>
-                            <td style={{ textAlign: 'end' }}>$ {orden.neto.toFixed(2)}</td>
+                            <td className="text-right">$ {orden.total.toFixed(2)}</td>
+                            <td className="text-right">- $ {orden.cargoML.toFixed(2)}</td>
+                            <td className="text-right">- $ {orden.impuestoIB.toFixed(2)}</td>
+                            <td className="text-right">$ {orden.totalRecibido.toFixed(2)}</td>
+                            <td className="text-right">- $ {orden.dineroFlex.toFixed(2)}</td>
+                            <td className="text-right">$ {orden.neto.toFixed(2)}</td>
                         </tr>
                     )}
                 </tbody>
