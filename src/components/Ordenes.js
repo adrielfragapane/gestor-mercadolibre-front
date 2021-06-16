@@ -95,9 +95,9 @@ const Ordenes = props => {
                             <td className="text-right">$ {orden.total.toFixed(2)}</td>
                             <td className="text-right">- $ {orden.cargoML.toFixed(2)}</td>
                             <td className="text-right">- $ {orden.impuestoIB.toFixed(2)}</td>
-                            <td className="text-right">$ {orden.totalRecibido.toFixed(2)}</td>
-                            <td className="text-right">- $ {orden.dineroFlex.toFixed(2)}</td>
-                            <td className="text-right">$ {orden.neto.toFixed(2)}</td>
+                            <td className="text-right"> $ {orden.totalRecibido}</td>
+                            <td className="text-right">- $ {orden.dineroFlex}</td>
+                            <td className="text-right">$ {orden.neto}</td>
                         </tr>
                     )}
                 </tbody>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import moment from 'moment';
 
 const Stock = props => {
 
@@ -9,8 +10,12 @@ const Stock = props => {
     const [posicion, setPosicion] = useState('');
     const [propietario, setPropietario] = useState('');
     const [imagen, setImagen] = useState('');
+    const [mensaje, setMensaje] = useState('');
+    const [ultimaActualizacion, setUltimaActualizacion] = useState(Date.now());
+    const [showAllert, setShowAllert] = useState(false);
 
     useEffect(() => {
+        getUltimaActualizacion();
         getlibros();
     }, []);
 
@@ -26,6 +31,28 @@ const Stock = props => {
             setPropietario('');
         }
     }, [libro]);
+
+    const getUltimaActualizacion = async () => {
+        await axios.get(`${process.env.REACT_APP_URL_API}/stock/ultimaActualizacion`)
+            .then(res => {
+                console.log(res);
+                if(res.status==200) {
+                   setUltimaActualizacion(res.data.fin);
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    const actualizarStock = async () => {
+        await axios.post(`${process.env.REACT_APP_URL_API}/stock/actualizar`)
+            .then(res => {
+                console.log(res);
+                if(res.status==200) {
+                    showNotif(`Actualización en proceso, el resultado puede tardar varios minutos`)
+                }
+            })
+            .catch(err => console.log(err));
+    }
 
     const getlibros = async () => {
         await axios.get(`${process.env.REACT_APP_URL_API}/stock`)
@@ -51,12 +78,26 @@ const Stock = props => {
             .catch(err => console.log(err));
     }
 
+    const showNotif = (mensaje) => {
+        setMensaje(mensaje);
+        setShowAllert(true)
+    }
+
     const selectValue = (val1, val2) => {
         return val1 != null ? val1 : (val2 != null ? val2 : undefined);
     }
 
     return (
         <div>
+            { showAllert && <div className="alert alert-warning alert-dismissible fade show" role="alert" 
+            style={{position:'fixed', top: '0px', right: '0px'}}>
+                {mensaje}
+                    <button type="button" className="close" data-dismiss="alert" aria-label="Close"
+                    onClick={() => setShowAllert(false)}>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>}
+            <button className="btn btn-success w-100" onClick={() => actualizarStock()}>Actualizar Stock <b>[{moment(ultimaActualizacion).format("YY-MM-DD HH:mm")}]</b></button>
             <table className="table table-bordered table-dark">
                 <thead>
                     <tr>
