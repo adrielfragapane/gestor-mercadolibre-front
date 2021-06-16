@@ -11,7 +11,7 @@ const Waldhuter = props => {
     },[])
 
     const getDataActualizacion = async () => {
-        await axios.get(`${process.env.REACT_APP_URL_API}/stock/waldhuter/data`)
+        await axios.get(`${process.env.REACT_APP_URL_API}/waldhuter/data`)
             .then(res => {
                 console.log(res);
                 if (res.status == 200) {
@@ -21,11 +21,33 @@ const Waldhuter = props => {
             .catch(err => console.log(err));
     }
 
-    const enviarArchivo = async () => {
+    const actualizarLibrosExistentes = async () => {
+        await axios.post(`${process.env.REACT_APP_URL_API}/waldhuter/actualizarLibrosExistentes`)
+            .then(res => {
+                console.log(res);
+                if (res.status == 200) {
+                    setDataActualizacion(res.data);
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    const publicarLibrosPendientes = async () => {
+        await axios.post(`${process.env.REACT_APP_URL_API}/waldhuter/publicarLibrosPendientes`)
+            .then(res => {
+                console.log(res);
+                if (res.status == 200) {
+                    setDataActualizacion(res.data);
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    const cargarExcel = async () => {
         let formData = new FormData();
 
         formData.append("excel", selectedFile);
-        await axios.post(`${process.env.REACT_APP_URL_API}/stock/waldhuter`, formData, {
+        await axios.post(`${process.env.REACT_APP_URL_API}/waldhuter/excel`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -39,13 +61,16 @@ const Waldhuter = props => {
     return (
         <div className="d-flex justify-content-center">
             <div className="mt-5 text-center">
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-
+                {/*<input type="text" value={name} onChange={(e) => setName(e.target.value)} />*/}
                 <input type="file" name="excel" onChange={(e) => setSelectedFile(e.target.files[0])} />
                 <br/>
-                <button className="btn btn-success mt-5" onClick={() => enviarArchivo()}>Enviar</button>
+                <div className="mt-5">
+                <button className="btn btn-success" onClick={() => cargarExcel()}>Cargar Excel</button>
+                <button className="btn btn-success ml-5" onClick={() => actualizarLibrosExistentes()}>Actualizar Libros Existentes</button>
+                <button className="btn btn-success ml-5" onClick={() => publicarLibrosPendientes()}>Publicar Libros Pendientes</button>
+                </div>
                 <br/>
-                <button className="btn btn-primary mt-5" onClick={() => getDataActualizacion()}>Actualizar</button>
+                <button className="btn btn-primary mt-5" onClick={() => getDataActualizacion()}>Actualizar Resultados</button>
                 <br/>
                 {dataActualizacion && <>
                     <p>{`Total registros: ${dataActualizacion.total}`}</p>

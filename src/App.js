@@ -24,9 +24,8 @@ function App() {
       <Route path="/waldhuter" component={Waldhuter} />
       <Route path="/ordenes" component={Ordenes} />
       <Route path="/facturas" component={Facturas} />
-      
       <Route path="/cassassa" component={Cassassa} />
-      <Route path="/preguntas" component={Preguntas} />
+  <Route path="/preguntas" component={Preguntas} />
     </Router>
   </State>
   );
